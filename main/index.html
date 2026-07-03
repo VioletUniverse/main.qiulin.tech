@@ -56,15 +56,15 @@ body{font-family:'Inter',sans-serif;background:#0d0a1a;color:#fff;-webkit-font-s
 .hero{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 40px}
 .hero-inner{opacity:0;transition:opacity 1s ease}
 .hero-inner.show{opacity:1}
-.hero-sub{font-size:clamp(.8rem,2vw,1.2rem);font-weight:300;letter-spacing:8px;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1vw;display:flex;align-items:center;justify-content:center;gap:16px}
-.sub-line{display:inline-block;width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent)}
-.hero-title{font-family:'Playfair Display',serif;font-size:clamp(4rem,15vw,11rem);font-weight:400;font-style:italic;letter-spacing:0;line-height:1.15;text-align:center;position:relative}
+.hero-sub{font-size:clamp(.65rem,1.4vw,.9rem);font-weight:300;letter-spacing:6px;color:rgba(255,255,255,.22);text-transform:uppercase;margin-bottom:0;display:flex;align-items:center;justify-content:center;gap:12px}
+.sub-line{display:inline-block;width:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(4rem,15vw,11rem);font-weight:400;font-style:italic;letter-spacing:0.08em;line-height:1.15;text-align:center;position:relative;overflow:visible;padding:0}
 .hero-title::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;background:radial-gradient(ellipse,rgba(160,120,255,.06) 0%,transparent 60%);pointer-events:none;z-index:-1;animation:tglow 4s ease-in-out infinite alternate}
 @keyframes tglow{0%{opacity:.5;transform:translate(-50%,-50%) scale(1)}100%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
-.ch{display:inline-block;background:linear-gradient(180deg,#fffcff 0%,#ede8ff 20%,#ddd0f5 40%,#c8b8e8 60%,#b0a0d8 80%,#8878b8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;transform:translateY(60px) scale(.8) rotateX(35deg);filter:blur(8px)}
-.hero-tag{font-size:clamp(1.2rem,3vw,2.2rem);margin-top:clamp(2rem,5vw,4rem);display:flex;align-items:baseline;justify-content:center;gap:.5rem;opacity:0;transform:translateY(20px);animation:fadeUp 1s ease 1.2s forwards}
-.hero-tag em{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;color:rgba(255,255,255,.45)}
-.dot{font-size:2rem;color:rgba(160,120,255,.35)}
+.ch{display:inline-block;padding:.05em .4em .1em .15em;margin-left:-.25em;margin-right:-.25em;background:linear-gradient(180deg,#fffcff 0%,#ede8ff 20%,#ddd0f5 40%,#c8b8e8 60%,#b0a0d8 80%,#8878b8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;transform:translateY(60px) scale(.8) rotateX(35deg);filter:blur(8px)}
+.hero-tag{font-size:clamp(.8rem,1.8vw,1.3rem);margin-top:0;display:flex;align-items:baseline;justify-content:center;gap:.5rem;font-weight:300;letter-spacing:2px;color:rgba(255,255,255,.25);opacity:0;transform:translateY(20px);animation:fadeUp 1s ease 1.2s forwards}
+.hero-tag em{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;color:rgba(255,255,255,.35)}
+.dot{font-size:1.2rem;color:rgba(160,120,255,.25)}
 @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
 
 /* === Scroll Hint === */

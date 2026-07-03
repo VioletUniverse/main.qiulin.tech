@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>楸林的仪表盘</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #2e3440; color: #d8dee9; min-height: 100vh; }
+  .header { text-align: center; padding: 48px 20px 32px; }
+  .header .logo { height: 64px; margin-bottom: 12px; }
+  .header h1 { font-size: 1.6rem; font-weight: 600; color: #eceff4; }
+  .header p { color: #7b88a1; font-size: 0.9rem; margin-top: 4px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 20px 40px; }
+  .section { margin-bottom: 32px; }
+  .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-left: 4px; }
+  .section-title i { color: #81a1c1; font-size: 1rem; }
+  .section-title span { font-size: 1.05rem; font-weight: 600; color: #eceff4; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .card {
+    background: #3b4252; border-radius: 12px; padding: 18px 16px;
+    display: flex; align-items: center; gap: 14px;
+    text-decoration: none; color: #d8dee9;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .card:hover { background: #434c5e; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .card .icon { width: 40px; height: 40px; background: rgba(129,161,193,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card .icon i { font-size: 1.1rem; color: #81a1c1; }
+  .card .text { min-width: 0; }
+  .card .name { font-size: 0.9rem; font-weight: 500; color: #eceff4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .sub { font-size: 0.75rem; color: #7b88a1; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .footer { text-align: center; padding: 24px 20px; color: #4c566a; font-size: 0.7rem; border-top: 1px solid #3b4252; }
+  .footer a { color: #4c566a; text-decoration: none; }
+  .footer a:hover { color: #81a1c1; }
+  @media (max-width: 480px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<div class="header">
+  <img src="/logo.png" alt="Logo" class="logo">
+  <h1>楸林的仪表盘</h1>
+  <p>Homelab Services</p>
+</div>
+<div class="container" id="app"></div>
+<div class="footer">
+  <a href="https://beian.miit.gov.cn/" target="_blank">渝ICP备2026010186号-1</a>
+  &nbsp;|&nbsp;
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=50019002505444" target="_blank">渝公网安备50019002505444号</a>
+</div>
+<script>
+fetch('services.json')
+  .then(r => r.json())
+  .then(data => {
+    const app = document.getElementById('app');
+    app.innerHTML = data.map(group => `
+      <div class="section">
+        <div class="section-title">
+          <i class="${group.icon}"></i>
+          <span>${group.name}</span>
+        </div>
+        <div class="cards">
+          ${group.items.map(item => `
+            <a class="card" href="${item.url}" target="_blank" rel="noopener">
+              <div class="icon"><i class="${item.icon}"></i></div>
+              <div class="text">
+                <div class="name">${item.name}</div>
+                <div class="sub">${item.subtitle || ''}</div>
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  })
+  .catch(() => {
+    document.getElementById('app').innerHTML = '<p style="text-align:center;color:#bf616a;padding:40px;">加载服务列表失败</p>';
+  });
+</script>
+</body>
+</html>

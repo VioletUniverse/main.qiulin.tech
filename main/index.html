@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <link rel="icon" href="/logo.png" />
+  <title>Qiulin - Pilot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#0d0a1a;color:#fff;-webkit-font-smoothing:antialiased}
+
+/* === Background === */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+.bg-grad{position:absolute;inset:0;background:linear-gradient(180deg,#0d0a1a 0%,#151030 12%,#1a1440 30%,#221850 50%,#2a1f60 70%,#342870 100%)}
+.bg-orbs{position:absolute;inset:0}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orbF 20s ease-in-out infinite}
+.o1{width:800px;height:800px;background:radial-gradient(circle,#c4b5fd 0%,#a78bfa 50%,transparent 70%);top:-15%;left:-15%;opacity:.22}
+.o2{width:600px;height:600px;background:radial-gradient(circle,#b4a0f8 0%,#8b70f0 50%,transparent 70%);top:30%;right:-10%;opacity:.2;animation-delay:-7s;animation-duration:25s}
+.o3{width:500px;height:500px;background:radial-gradient(circle,#d8b4fe 0%,#c084fc 50%,transparent 70%);bottom:-5%;left:25%;opacity:.22;animation-delay:-14s;animation-duration:22s}
+.o4{width:400px;height:400px;background:radial-gradient(circle,#a5b4fc 0%,#818cf8 50%,transparent 70%);top:50%;left:-5%;opacity:.15;animation-delay:-5s;animation-duration:28s}
+.o5{width:350px;height:350px;background:radial-gradient(circle,#e9d5ff 0%,#c084fc 50%,transparent 70%);top:10%;right:20%;opacity:.12;animation-delay:-10s;animation-duration:30s}
+@keyframes orbF{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.05)}50%{transform:translate(-20px,30px) scale(.95)}75%{transform:translate(40px,20px) scale(1.02)}}
+.bg-aurora{position:absolute;top:-20%;left:-10%;width:120%;height:60%;background:linear-gradient(135deg,transparent 20%,rgba(139,92,246,.04) 30%,rgba(168,85,247,.06) 40%,rgba(196,139,253,.04) 50%,transparent 60%);filter:blur(60px);animation:aurora 15s ease-in-out infinite alternate}
+@keyframes aurora{0%{transform:translateX(-5%) skewX(-2deg);opacity:.6}50%{transform:translateX(5%) skewX(2deg);opacity:1}100%{transform:translateX(-3%) skewX(-1deg);opacity:.7}}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(200,180,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(200,180,255,.035) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 60% 50% at 50% 40%,black 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse 60% 50% at 50% 40%,black 20%,transparent 70%)}
+#canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* === Preloader === */
+.preloader{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:linear-gradient(45deg,#cebdf8,#e2dbf8);transition:opacity .8s ease,visibility .8s}
+.preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+.preloader-logo{width:60px;height:60px;border-radius:50%;filter:brightness(0) invert(1);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
+
+/* === Cursor === */
+.glow{position:fixed;width:400px;height:400px;border-radius:50%;pointer-events:none;z-index:1;background:radial-gradient(circle,rgba(140,110,220,.06) 0%,transparent 70%);transform:translate(-50%,-50%);opacity:0;transition:opacity .5s}
+.glow.on{opacity:1}
+
+/* === Logo === */
+.logo-tl{position:fixed;top:28px;left:36px;z-index:20;display:inline-block;transition:opacity .3s}
+.logo-tl:hover{opacity:.7}
+.logo-img{height:22px;width:auto;border-radius:3px;filter:brightness(0) saturate(100%) invert(70%) sepia(30%) saturate(1800%) hue-rotate(200deg) brightness(100%) contrast(90%);opacity:.45;transition:opacity .3s}
+.logo-img:hover{opacity:.65}
+
+/* === Nav === */
+.nav{position:fixed;top:28px;right:36px;z-index:20;display:flex;gap:8px}
+.pill{font-size:.72rem;font-weight:400;letter-spacing:2px;color:rgba(255,255,255,.25);text-decoration:none;padding:6px 16px;border:1px solid rgba(255,255,255,.06);border-radius:999px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(255,255,255,.03);transition:all .3s}
+.pill:hover{color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.06)}
+.menu-btn{display:none;position:fixed;top:24px;right:24px;z-index:25;background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.06);border-radius:999px;color:rgba(255,255,255,.4);font-size:.8rem;letter-spacing:2px;padding:10px 24px;cursor:pointer}
+.menu{position:fixed;inset:0;z-index:22;background:rgba(13,10,26,.95);backdrop-filter:blur(24px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;opacity:0;pointer-events:none;transition:opacity .4s}
+.menu.open{opacity:1;pointer-events:auto}
+.menu a{font-size:1.5rem;color:rgba(255,255,255,.6);text-decoration:none;letter-spacing:3px;transition:color .3s}
+.menu a:hover{color:#fff}
+
+/* === Hero === */
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 40px}
+.hero-inner{opacity:0;transition:opacity 1s ease}
+.hero-inner.show{opacity:1}
+.hero-sub{font-size:clamp(.8rem,2vw,1.2rem);font-weight:300;letter-spacing:8px;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:1vw;display:flex;align-items:center;justify-content:center;gap:16px}
+.sub-line{display:inline-block;width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent)}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(4rem,15vw,11rem);font-weight:400;font-style:italic;letter-spacing:0;line-height:1.15;text-align:center;position:relative}
+.hero-title::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;background:radial-gradient(ellipse,rgba(160,120,255,.06) 0%,transparent 60%);pointer-events:none;z-index:-1;animation:tglow 4s ease-in-out infinite alternate}
+@keyframes tglow{0%{opacity:.5;transform:translate(-50%,-50%) scale(1)}100%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
+.ch{display:inline-block;background:linear-gradient(180deg,#fffcff 0%,#ede8ff 20%,#ddd0f5 40%,#c8b8e8 60%,#b0a0d8 80%,#8878b8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;transform:translateY(60px) scale(.8) rotateX(35deg);filter:blur(8px)}
+.hero-tag{font-size:clamp(1.2rem,3vw,2.2rem);margin-top:clamp(2rem,5vw,4rem);display:flex;align-items:baseline;justify-content:center;gap:.5rem;opacity:0;transform:translateY(20px);animation:fadeUp 1s ease 1.2s forwards}
+.hero-tag em{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;color:rgba(255,255,255,.45)}
+.dot{font-size:2rem;color:rgba(160,120,255,.35)}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* === Scroll Hint === */
+.scroll-hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:10;opacity:0;transition:opacity .6s}
+.scroll-hint.show{opacity:1}
+.scroll-hint span{font-size:.55rem;letter-spacing:4px;color:rgba(255,255,255,.1);text-transform:uppercase}
+.scroll-line{width:1px;height:24px;margin-top:6px;background:linear-gradient(180deg,rgba(255,255,255,.1),transparent);animation:spulse 2.5s ease-in-out infinite}
+@keyframes spulse{0%,100%{opacity:.2}50%{opacity:.8}}
+
+/* === Love Pages === */
+.lp{position:relative;z-index:2;height:200vh}
+.lp-sticky{position:sticky;top:0;height:100vh;width:100%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .08s linear;overflow:hidden}
+.lp-t{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(1.5rem,3.5vw,2.8rem);line-height:2;letter-spacing:.04em;text-align:center;padding:0 24px}
+.lp-t br{display:block;content:'';margin-bottom:.2em}
+.lc{display:inline;opacity:.06;transition:opacity .4s ease;background:linear-gradient(180deg,#fffcff 0%,#ede8ff 25%,#ddd0f5 50%,#c8b8e8 75%,#b0a0d8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lc.on{opacity:1}
+
+/* === Sections === */
+.sec{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 20px}
+.sec-in{max-width:800px;width:100%;text-align:center}
+.about{font-size:clamp(1rem,2.2vw,1.4rem);font-weight:300;color:rgba(255,255,255,.45);line-height:2;letter-spacing:1px}
+.stats-row{display:flex;justify-content:center;gap:80px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-n{display:block;font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(3rem,8vw,6rem);font-weight:400;background:linear-gradient(180deg,#f0ecff 0%,#b0a0d8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.stat-l{display:block;font-size:.65rem;letter-spacing:3px;color:rgba(255,255,255,.18);text-transform:uppercase;margin-top:8px}
+
+/* === Footer === */
+.foot{display:flex;flex-direction:column;align-items:center;gap:24px}
+.foot-quote{font-size:clamp(1rem,2.5vw,1.5rem);font-weight:300;color:rgba(255,255,255,.45);line-height:1.8}
+.foot-logo{position:relative;height:80px;display:flex;align-items:center;justify-content:center}
+.foot-logo-img{height:100%;width:auto;border-radius:8px;position:relative;z-index:1;filter:brightness(0) saturate(100%) invert(70%) sepia(30%) saturate(1800%) hue-rotate(200deg) brightness(100%) contrast(90%);opacity:.4}
+.foot-logo-glow{position:absolute;height:100%;width:auto;border-radius:8px;filter:blur(24px);opacity:.3}
+.foot-links{display:flex;gap:28px}
+.foot-links a{font-size:.7rem;letter-spacing:2px;color:rgba(255,255,255,.18);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:rgba(255,255,255,.45)}
+.foot-copy{font-size:.55rem;color:rgba(255,255,255,.1)}
+.foot-icp{font-size:.5rem;color:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.foot-icp a{color:rgba(255,255,255,.12);text-decoration:none;transition:color .2s}
+.foot-icp a:hover{color:rgba(255,255,255,.3)}
+.foot-icp span{color:rgba(255,255,255,.08)}
+
+/* === Reveal === */
+.rev{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.23,1,.32,1),transform .8s cubic-bezier(.23,1,.32,1)}
+.rev.show{opacity:1;transform:translateY(0)}
+
+/* === Responsive === */
+@media(max-width:768px){
+  .nav{display:none}
+  .menu-btn{display:block}
+  .hero-title{font-size:clamp(4rem,24vw,8rem)}
+  .hero-sub{font-size:.7rem;letter-spacing:4px}
+  .sub-line{width:20px}
+  .stats-row{gap:40px}
+  .lp-t{font-size:clamp(1.3rem,5.5vw,1.8rem);line-height:2.2;letter-spacing:.01em}
+}
+</style>
+</head>
+<body>
+  <div class="preloader" id="preloader">
+    <img src="/logo.png" alt="" class="preloader-logo" />
+  </div>
+
+  <div class="bg">
+    <div class="bg-grad"></div>
+    <div class="bg-orbs">
+      <div class="orb o1"></div>
+      <div class="orb o2"></div>
+      <div class="orb o3"></div>
+      <div class="orb o4"></div>
+      <div class="orb o5"></div>
+    </div>
+    <div class="bg-aurora"></div>
+    <div class="bg-grid"></div>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div class="glow" id="glow"></div>
+
+  <a href="/" class="logo-tl"><img src="/logo.png" alt="Qiulin" class="logo-img" /></a>
+  <nav class="nav">
+    <a href="/" class="pill">Home</a>
+    <a href="https://blog.qiulin.tech" target="_blank" class="pill">Blog</a>
+  </nav>
+  <button class="menu-btn" id="menuBtn">Menu</button>
+  <div class="menu" id="menu">
+    <a href="/">Home</a>
+    <a href="https://blog.qiulin.tech" target="_blank">Blog</a>
+  </div>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <p class="hero-sub"><span class="sub-line"></span>The art of<span class="sub-line"></span></p>
+        <h1 class="hero-title">
+          <span class="ch">f</span><span class="ch">l</span><span class="ch">y</span><span class="ch">i</span><span class="ch">n</span><span class="ch">g</span>
+        </h1>
+        <p class="hero-tag">with <em>precision</em> <span class="dot">·</span></p>
+      </div>
+    </section>
+
+    <!-- Love Pages -->
+    <section class="lp" data-i="0">
+      <div class="lp-sticky">
+        <p class="lp-t"><span class="lc">三</span><span class="lc">万</span><span class="lc">英</span><span class="lc">尺</span><span class="lc">的</span><span class="lc">云</span><span class="lc">海</span><span class="lc">，</span><br/><span class="lc">不</span><span class="lc">及</span><span class="lc">你</span><span class="lc">眼</span><span class="lc">中</span><span class="lc">的</span><span class="lc">一</span><span class="lc">片</span><span class="lc">星</span><span class="lc">河</span></p>
+      </div>
+    </section>
+    <section class="lp" data-i="1">
+      <div class="lp-sticky">
+        <p class="lp-t"><span class="lc">我</span><span class="lc">飞</span><span class="lc">过</span><span class="lc">无</span><span class="lc">数</span><span class="lc">城</span><span class="lc">市</span><span class="lc">，</span><br/><span class="lc">最</span><span class="lc">想</span><span class="lc">降</span><span class="lc">落</span><span class="lc">的</span><span class="lc">地</span><span class="lc">方</span><span class="lc">是</span><span class="lc">你</span><span class="lc">身</span><span class="lc">旁</span></p>
+      </div>
+    </section>
+    <section class="lp" data-i="2">
+      <div class="lp-sticky">
+        <p class="lp-t"><span class="lc">每</span><span class="lc">一</span><span class="lc">次</span><span class="lc">起</span><span class="lc">飞</span><span class="lc">都</span><span class="lc">是</span><span class="lc">为</span><span class="lc">了</span><span class="lc">归</span><span class="lc">来</span><span class="lc">，</span><br/><span class="lc">而</span><span class="lc">你</span><span class="lc">是</span><span class="lc">归</span><span class="lc">来</span><span class="lc">的</span><span class="lc">理</span><span class="lc">由</span></p>
+      </div>
+    </section>
+    <section class="lp" data-i="3">
+      <div class="lp-sticky">
+        <p class="lp-t"><span class="lc">日</span><span class="lc">出</span><span class="lc">日</span><span class="lc">落</span><span class="lc">看</span><span class="lc">遍</span><span class="lc">，</span><br/><span class="lc">最</span><span class="lc">美</span><span class="lc">的</span><span class="lc">是</span><span class="lc">和</span><span class="lc">你</span><span class="lc">一</span><span class="lc">起</span><span class="lc">的</span><span class="lc">那</span><span class="lc">次</span></p>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="sec" id="about">
+      <div class="sec-in">
+        <p class="about rev">A320 pilot based in Chongqing.<br/>Every flight is a story written in the sky.</p>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="sec" id="stats">
+      <div class="sec-in stats-row">
+        <div class="stat rev">
+          <span class="stat-n" data-to="226">0</span>
+          <span class="stat-l">Landings</span>
+        </div>
+        <div class="stat rev">
+          <span class="stat-n" data-to="1477">0</span>
+          <span class="stat-l">Flight Hours</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <section class="sec" id="footer">
+      <div class="sec-in foot">
+        <p class="foot-quote rev">Let the sky be your canvas<br/>and the aircraft your brush</p>
+        <div class="foot-logo rev">
+          <img src="/logo.png" alt="Qiulin" class="foot-logo-img" />
+          <img src="/logo.png" alt="" class="foot-logo-glow" />
+        </div>
+        <div class="foot-links rev">
+          <a href="https://blog.qiulin.tech" target="_blank">Blog</a>
+          <a href="https://github.com/qiulin" target="_blank">GitHub</a>
+          <a href="https://www.instagram.com/" target="_blank">Instagram</a>
+        </div>
+        <p class="foot-copy rev">© 2026 Qiulin · Pilot</p>
+        <p class="foot-icp rev">
+          <a href="https://beian.miit.gov.cn/" target="_blank">渝ICP备2026010186号-1</a>
+          <span>|</span>
+          <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=50019002505444" target="_blank">渝公网安备50019002505444号</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="scroll-hint" id="scrollHint">
+    <span>Scroll to explore</span>
+    <div class="scroll-line"></div>
+  </div>
+
+  <script>!function(){
+'use strict';
+
+/* === Preloader === */
+var preloader=document.getElementById('preloader');
+var heroInner=document.querySelector('.hero-inner');
+var scrollHint=document.getElementById('scrollHint');
+
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    preloader.classList.add('done');
+    setTimeout(function(){
+      heroInner.classList.add('show');
+    var chs=document.querySelectorAll('.ch');
+    chs.forEach(function(ch,i){
+      var delay=500+i*80;
+      var start=null;
+      function anim(ts){
+        if(!start)start=ts;
+        var p=Math.min((ts-start)/800,1);
+        var ease=1-Math.pow(1-p,3);
+        ch.style.opacity=String(ease);
+        ch.style.transform='translateY('+((1-ease)*60)+'px) scale('+(0.8+0.2*ease)+') rotateX('+(35*(1-ease))+'deg)';
+        ch.style.filter='blur('+(8*(1-ease))+'px)';
+        if(p<1)requestAnimationFrame(anim);
+      }
+      setTimeout(function(){requestAnimationFrame(anim)},delay);
+    });
+      setTimeout(function(){scrollHint.classList.add('show')},1000);
+    },600);
+  },1000);
+});
+
+/* === Canvas: particles + shooting stars === */
+var canvas=document.getElementById('canvas');
+var ctx=canvas.getContext('2d');
+var W,H;
+
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();
+window.addEventListener('resize',resize);
+
+/* Particles */
+var particles=[];
+var PC=120;
+
+function P(){this.reset();this.y=Math.random()*H}
+P.prototype.reset=function(){
+  this.x=Math.random()*W;this.y=-10;
+  this.vx=(Math.random()-.5)*.3;this.vy=.15+Math.random()*.4;
+  this.r=1+Math.random()*1.5;this.a=.15+Math.random()*.35;
+  this.p=Math.random()*Math.PI*2;this.ps=.01+Math.random()*.02;
+};
+P.prototype.update=function(){this.x+=this.vx;this.y+=this.vy;this.p+=this.ps;if(this.y>H+10||this.x<-10||this.x>W+10)this.reset()};
+P.prototype.draw=function(){
+  var o=this.a*(.6+.4*Math.sin(this.p));
+  ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+  ctx.fillStyle='rgba(196,181,253,'+o+')';ctx.fill();
+};
+
+for(var i=0;i<PC;i++){var p=new P();particles.push(p)}
+
+/* Shooting stars */
+var stars=[];
+function S(){this.reset()}
+S.prototype.reset=function(){this.on=false;this.t=200+Math.random()*600};
+S.prototype.launch=function(){
+  this.on=true;this.x=Math.random()*W*.8;this.y=Math.random()*H*.3;
+  this.len=80+Math.random()*120;this.sp=6+Math.random()*6;
+  this.ang=(25+Math.random()*20)*Math.PI/180;
+  this.vx=Math.cos(this.ang)*this.sp;this.vy=Math.sin(this.ang)*this.sp;
+  this.a=.6+Math.random()*.4;this.life=0;this.ml=60+Math.random()*40;
+};
+S.prototype.update=function(){
+  if(!this.on){this.t--;if(this.t<=0)this.launch();return}
+  this.x+=this.vx;this.y+=this.vy;this.life++;if(this.life>this.ml)this.reset();
+};
+S.prototype.draw=function(){
+  if(!this.on)return;
+  var pr=this.life/this.ml,o=this.a*(1-pr);
+  var tx=this.x-Math.cos(this.ang)*this.len*(1-pr*.5);
+  var ty=this.y-Math.sin(this.ang)*this.len*(1-pr*.5);
+  var g=ctx.createLinearGradient(tx,ty,this.x,this.y);
+  g.addColorStop(0,'rgba(196,181,253,0)');g.addColorStop(1,'rgba(230,220,255,'+o+')');
+  ctx.beginPath();ctx.moveTo(tx,ty);ctx.lineTo(this.x,this.y);
+  ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.stroke();
+  ctx.beginPath();ctx.arc(this.x,this.y,2,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,'+o*.8+')';ctx.fill();
+};
+
+for(i=0;i<4;i++){var s=new S();s.t=Math.random()*400;stars.push(s)}
+
+/* Connections */
+function drawConn(){
+  var md=120;
+  for(var i=0;i<particles.length;i++){
+    for(var j=i+1;j<particles.length;j++){
+      var dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y;
+      var d=Math.sqrt(dx*dx+dy*dy);
+      if(d<md){
+        var a=(1-d/md)*.06;
+        ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle='rgba(180,160,248,'+a+')';ctx.lineWidth=.5;ctx.stroke();
+      }
+    }
+  }
+}
+
+/* Loop */
+function animate(){
+  ctx.clearRect(0,0,W,H);
+  for(var i=0;i<particles.length;i++){particles[i].update();particles[i].draw()}
+  drawConn();
+  for(i=0;i<stars.length;i++){stars[i].update();stars[i].draw()}
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* === Cursor Glow === */
+var glow=document.getElementById('glow');
+if(window.matchMedia('(pointer:fine)').matches){
+  var mx=0,my=0,gx=0,gy=0;
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;glow.classList.add('on')});
+  document.addEventListener('mouseleave',function(){glow.classList.remove('on')});
+  !function loop(){gx+=(mx-gx)*.06;gy+=(my-gy)*.06;glow.style.left=gx+'px';glow.style.top=gy+'px';requestAnimationFrame(loop)}();
+}
+
+/* === Love Pages === */
+var lps=document.querySelectorAll('.lp');
+
+function updateLP(){
+  var vh=window.innerHeight;
+  for(var i=0;i<lps.length;i++){
+    var page=lps[i];
+    var rect=page.getBoundingClientRect();
+    var text=page.querySelector('.lp-sticky');
+    var chars=page.querySelectorAll('.lc');
+    if(!text||!chars.length)continue;
+    var sH=rect.height,scrolled=-rect.top;
+    var raw=Math.max(0,Math.min(1,scrolled/(sH-vh)));
+    // Fade: 0~20% in, 20~80% visible, 80~100% out
+    var op=0;
+    if(raw<.2)op=raw/.2;
+    else if(raw<.8)op=1;
+    else op=(1-raw)/.2;
+    text.style.opacity=Math.max(0,Math.min(1,op));
+    // Chars: 15%~75%
+    var cp=Math.max(0,Math.min(1,(raw-.15)/.55));
+    var rc=Math.floor(cp*chars.length);
+    for(var j=0;j<chars.length;j++)chars[j].classList.toggle('on',j<rc);
+  }
+}
+
+/* === Counters === */
+var statNs=document.querySelectorAll('.stat-n');
+var counted=false;
+
+function runCount(){
+  if(counted||!statNs.length)return;
+  for(var i=0;i<statNs.length;i++){
+    if(statNs[i].getBoundingClientRect().top<window.innerHeight*.55){counted=true;break}
+  }
+  if(!counted)return;
+  for(i=0;i<statNs.length;i++){
+    (function(el){
+      var to=+el.dataset.to,st=performance.now();
+      !function tick(now){
+        var p=Math.min((now-st)/2000,1);
+        el.textContent=Math.round((1-Math.pow(1-p,3))*to);
+        if(p<1)requestAnimationFrame(tick);
+      }(st);
+    })(statNs[i]);
+  }
+}
+
+/* === Reveal === */
+var revs=document.querySelectorAll('.rev');
+var hintHidden=false;
+
+function onScroll(){
+  var vh=window.innerHeight;
+  if(!hintHidden&&window.scrollY>80){scrollHint.classList.remove('show');hintHidden=true}
+  updateLP();
+  for(var i=0;i<revs.length;i++){
+    if(revs[i].getBoundingClientRect().top<vh*.85){revs[i].style.transitionDelay=(i%4)*.12+'s';revs[i].classList.add('show')}
+  }
+  runCount();
+  parallax();
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+onScroll();
+
+/* === Parallax === */
+var heroTitle=document.querySelector('.hero-title');
+var heroSub=document.querySelector('.hero-sub');
+var heroTag=document.querySelector('.hero-tag');
+
+function parallax(){
+  var s=window.scrollY;if(s>=window.innerHeight)return;
+  var r=s/window.innerHeight;
+  if(heroTitle){heroTitle.style.transform='translateY('+s*.3+'px) scale('+(1-r*.1)+')';heroTitle.style.opacity=Math.max(0,1-r*1.3)}
+  if(heroSub){heroSub.style.transform='translateY('+s*.15+'px)';heroSub.style.opacity=Math.max(0,1-r*1.5)}
+  if(heroTag){heroTag.style.transform='translateY('+s*.2+'px)';heroTag.style.opacity=Math.max(0,1-r*1.5)}
+}
+
+/* === Mobile Menu === */
+var menuBtn=document.getElementById('menuBtn');
+var menu=document.getElementById('menu');
+var menuOpen=false;
+menuBtn.addEventListener('click',function(){menuOpen=!menuOpen;menu.classList.toggle('open',menuOpen);menuBtn.textContent=menuOpen?'Close':'Menu'});
+var menuAs=menu.querySelectorAll('a');
+for(i=0;i<menuAs.length;i++)menuAs[i].addEventListener('click',function(){menuOpen=false;menu.classList.remove('open');menuBtn.textContent='Menu'});
+
+}();
+</script>
+</body>
+</html>

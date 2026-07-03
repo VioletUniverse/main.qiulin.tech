@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>License Number Query</title>
+<link rel="icon" type="image/png" href="/favicon.png?v=2">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 20px; }
+  .container { max-width: 600px; margin: 0 auto; }
+  h1 { display: flex; align-items: center; justify-content: center; gap: 12px; color: #1a73e8; font-size: 1.5rem; margin-bottom: 20px; }
+  h1 img { height: 40px; }
+  .search-box { display: flex; gap: 8px; margin-bottom: 20px; }
+  input[type="text"] { flex: 1; padding: 12px 16px; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 10px; outline: none; transition: border-color 0.2s; }
+  input[type="text"]:focus { border-color: #1a73e8; }
+  button.btn-search { padding: 12px 24px; font-size: 1rem; background: #1a73e8; color: #fff; border: none; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+  button.btn-search:active { background: #1557b0; }
+  .result-card { background: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .captain-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .captain-name { font-size: 1.1rem; font-weight: 600; color: #333; }
+  .captain-license { font-size: 0.9rem; color: #666; font-family: 'Courier New', monospace; }
+  button.btn-copy { padding: 8px 16px; font-size: 0.85rem; background: #e8f0fe; color: #1a73e8; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  button.btn-copy.copied { background: #0f9d58; color: #fff; }
+  .count { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 16px; }
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 24px; border-radius: 8px; font-size: 0.9rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
+  .toast.show { opacity: 1; }
+  .loading { text-align: center; color: #888; padding: 40px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1><img src="/logo.png?v=2" alt="License">License Number Query</h1>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="输入姓名中的任意一个字" maxlength="10" autocomplete="off">
+    <button class="btn-search" onclick="doSearch()">查询</button>
+  </div>
+  <div class="count" id="count"></div>
+  <div id="results"></div>
+  <p style="text-align:center;color:#999;font-size:0.85rem;margin-top:24px;">如果未收录，请联系秋林</p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+let captains = [];
+
+// 从 JSON 文件加载数据
+fetch('captains.json')
+  .then(r => r.json())
+  .then(data => { captains = data; })
+  .catch(() => { document.getElementById('results').innerHTML = '<p class="loading" style="color:#e53935;">数据加载失败，请刷新重试</p>'; });
+
+function doSearch() {
+  const keyword = document.getElementById('searchInput').value.trim();
+  const results = keyword ? captains.filter(c => c.name.includes(keyword)) : [];
+  const container = document.getElementById('results');
+  const countEl = document.getElementById('count');
+
+  if (!keyword) {
+    countEl.textContent = '';
+    container.innerHTML = '';
+    return;
+  }
+
+  countEl.textContent = `共找到 ${results.length} 位机长`;
+  container.innerHTML = results.map(c => `
+    <div class="result-card">
+      <div class="captain-info">
+        <span class="captain-name">${c.name}</span>
+        <span class="captain-license">${c.license}</span>
+      </div>
+      <button class="btn-copy" onclick="copyLicense(this, '${c.license}')">复制</button>
+    </div>
+  `).join('');
+}
+
+function copyLicense(btn, license) {
+  navigator.clipboard.writeText(license).then(() => {
+    btn.textContent = '已复制';
+    btn.classList.add('copied');
+    showToast('执照号已复制');
+    setTimeout(() => {
+      btn.textContent = '复制';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    showToast('复制失败，请长按手动复制');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+document.getElementById('searchInput').addEventListener('keyup', e => {
+  if (e.key === 'Enter') doSearch();
+});
+</script>
+<div style="text-align:center;margin-top:40px;padding:16px 4px;color:#999;font-size:0.6rem;white-space:nowrap;overflow-x:auto;">
+  <a href="https://beian.miit.gov.cn/" target="_blank" style="color:#999;text-decoration:none;">渝ICP备2026010186号-1</a>
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAoCAYAAACWwljjAAAFQklEQVRYw+3Wa1BUdRjH8SOpMeg4WhZGpDIxiaaTeUFgWrxE4AVRQJGlRRAVIV1JkbgMgQLi5AVBQSVLSp0xlEAUKBEEFZCrCstll8UV2AV2YbmoGCrYv31+R95UL5pmmtamZ+bz6rz5nvOc/5zDcX9jGLs/iTxuyvIlWYkRFeTHA2HVRFtzfhthTG5KuH96/vUgNlC4mMgyw1NJit/aAXLKazYje9xtIMZ/OZz50gW+9hcNkvoLEemEPbnrSP47QYwxQ5Ifv54RqzcXwFFvSyjaOhfavN8F7Y5ZcC/HH9JOB4LNa9Zw5YA76OZV8vIGMdZtSp7cDrtOnOavYiQhTAiPwi1AMtIQaqyngsxpBtw2GAGDKfaQmpUAa6xc4Vfp4UtEdzAMycsT9JQ1Tyctl/2eEkuTlYysF/rCUNxMqDEzgTqzSXBnpgnIHCzgjvEEuD52DLBr3rA1MAaWmNtB582wdtIljZ9G9D+IPU6aTxIPBjHCcXvg3CEh9K2fDLWvjIH6D6fwTIyheuwEqLUyhzLOALq8pkN+bgRw3HY4FBsMzxojZxP9DequLjAlQwVrbpIjhyIY4UYGQ/buhdBqPxlk3Gion2IMDQIz3kJe/ZS34I7uHkmD7VSQVgYDNyIAwsNCgfXGXoOBPjP9DKrOCAogA2etGTmTHAMcFwFZye7wS5QlVHGjoEw4A2qPCUBZ6AzNcQ5Q/YYRdO+YB1U3dsDwypLio4FJ3ECryIzWz6Cm3NgTRHN8HiPF6eHAGSbAdh8feFZkB7krzaHE9h2o85sDsiAbkIsXQMN+e2CtGyF0kzdwXCgU5++D/ouLQFV4OEU/g2Q/iNuIPNaKkQflAWBqexxGjhLDVUcL6IwSQN3SGVChe6FJg9dckCx6D1QBliDZLIAxo7eA8eyv4KE0BJqTrHkZvnL9DJKn+Twmt0NsGGHZy2Dn3kQYfsQ53Hh4/r4RNGz8AIpdzKEuaAF0RC2E57MmQgE3ATjuM/CPiANW7AqSfQJQ5vk362eQKmd3JrmXsoSRocpNIMnbB9zbceDIWUPmuHFQNMkISqa9DpUvNK6YDpW2s8DfwBK48WFQnhMCgzUBoLy0BrRVe5P0NWjPLdKUsJiR1tR1wGp8IeZwMgx/SrgRvjxuAziNcwLvyathLOcJHLflhRDYGRYFrNET2rJ5yvPLoas0tOj/oL8UpC4JHyTSU+6MNCS4gvKoAB5WiKG+MAQSg0WwLXQ/ZJ3xhao0FxB5hYCbUwAEfhEF3Td8QP2dAOQnPwFlxgrolUVq9TPoaX+ZB2nLc2Gk6awj1MU78HZZwJMid2Byb550JQwVO0NfxlJgdz14vWKeRAiK6DlQF28PLZdcoLNcBIO92bb6GTQ8Q/13RURT6tlH2gvXMlITLYD6uI+gp2ozdF0VQXumM6ivCqGvahM8kPiDItkeGo8tB025GFQ3xFrSr06zI3/4yde7oN7m0sWk5eKWDqK5JWJQvAHac9ygq3Adr9gTNNc3QG85rzPfHe5/7wDtPwuhp/Zz6CjyhaZzwi6ivfetHdH/oP77+3PJQOsuRnqkQdCa4wWqyx6gyecpL64GTaEX7ycXUJz4GJp1B4O0X/Hg0Xp1tFV+8Ei1k6c5coHofxBrrzQinbKYo0SVJ+wn6iurGHlY5gY911aDJnMFaHXXiDp9GQyvtKfUA9QFTtBZ7gPdit0tpFd9OpwwFmlA9D/o9yNLDpxIKmI8PMnNSNtviCLVpYTITzrXEGWaq4qos0WgOPdpCenIF+eRrurjB4k0PXopYZG6gMg/D/gNBUxhAbSAmKMAAAAASUVORK5CYII=" alt="" style="height:0.8em;vertical-align:middle;margin:0 2px;">
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=50019002505444" target="_blank" style="color:#999;text-decoration:none;">渝公网安备50019002505444号</a>
+</div>
+</body>
+</html>

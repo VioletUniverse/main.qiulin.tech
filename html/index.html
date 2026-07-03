@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>楸林的主页</title>
+  <link rel="icon" href="/favicon.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* 星空背景 */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--duration) infinite;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    
+    /* 主容器 */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    /* 头像区域 */
+    .profile {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease;
+    }
+    
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.3);
+      box-shadow: 0 0 30px rgba(100,100,255,0.3);
+      transition: transform 0.3s;
+      object-fit: cover;
+    }
+    
+    .avatar:hover {
+      transform: scale(1.05) rotate(5deg);
+    }
+    
+    .name {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.5rem;
+      margin-top: 20px;
+      background: linear-gradient(90deg, #a78bfa, #818cf8, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .title {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+      margin-top: 8px;
+      letter-spacing: 2px;
+    }
+    
+    /* 时间进度 */
+    .time-progress {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+    
+    .progress-card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px 20px;
+      min-width: 100px;
+      text-align: center;
+    }
+    
+    .progress-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      border-radius: 2px;
+      transition: width 1s ease;
+    }
+    
+    .progress-value {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    /* 每日一言 */
+    .quote {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 40px;
+      text-align: center;
+      max-width: 500px;
+      animation: fadeInUp 0.8s ease 0.4s both;
+    }
+    
+    .quote-icon {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .quote-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.8);
+    }
+    
+    /* 服务卡片 */
+    .services {
+      width: 100%;
+      animation: fadeInUp 0.8s ease 0.6s both;
+    }
+    
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+    
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+    }
+    
+    .card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 20px;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(167,139,250,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    
+    .card-info {
+      min-width: 0;
+    }
+    
+    .card-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .card-desc {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* 底部 */
+    .footer {
+      margin-top: auto;
+      padding: 30px 0;
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.7rem;
+      animation: fadeInUp 0.8s ease 0.8s both;
+    }
+    
+    .footer a {
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .footer a:hover {
+      color: #a78bfa;
+    }
+    
+    /* 动画 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* 响应式 */
+    @media (max-width: 600px) {
+      .name { font-size: 2rem; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .time-progress { gap: 10px; }
+      .progress-card { min-width: 80px; padding: 10px 15px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 星空背景 -->
+  <div class="stars" id="stars"></div>
+  
+  <div class="container">
+    <!-- 头像 -->
+    <div class="profile">
+      <img src="/logo.png" alt="Logo" class="avatar">
+      <div class="name">QIULIN</div>
+      <div class="title">✈️ 飞行员 · Homelab · 技术爱好者</div>
+    </div>
+    
+    <!-- 时间进度 -->
+    <div class="time-progress">
+      <div class="progress-card">
+        <div class="progress-label">今日</div>
+        <div class="progress-bar"><div class="progress-fill" id="dayBar"></div></div>
+        <div class="progress-value" id="dayValue">0%</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-label">本周</div>
+        <div class="progress-bar"><div class="progress-fill" id="weekBar"></div></div>
+        <div class="progress-value" id="weekValue">0%</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-label">本月</div>
+        <div class="progress-bar"><div class="progress-fill" id="monthBar"></div></div>
+        <div class="progress-value" id="monthValue">0%</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-label">今年</div>
+        <div class="progress-bar"><div class="progress-fill" id="yearBar"></div></div>
+        <div class="progress-value" id="yearValue">0%</div>
+      </div>
+    </div>
+    
+    <!-- 每日一言 -->
+    <div class="quote">
+      <div class="quote-icon">💡</div>
+      <div class="quote-text" id="quoteText">加载中...</div>
+    </div>
+    
+    <!-- 服务卡片 -->
+    <div class="services">
+      <div class="section-title">🏠 MAG 主机</div>
+      <div class="cards">
+        <a class="card" href="https://homer.qiulin.tech" target="_blank">
+          <div class="card-icon">🏠</div>
+          <div class="card-info">
+            <div class="card-name">Homer 仪表盘</div>
+            <div class="card-desc">服务面板</div>
+          </div>
+        </a>
+        <a class="card" href="https://ha.qiulin.tech" target="_blank">
+          <div class="card-icon">🏡</div>
+          <div class="card-info">
+            <div class="card-name">Home Assistant</div>
+            <div class="card-desc">智能家居</div>
+          </div>
+        </a>
+        <a class="card" href="https://up.qiulin.tech" target="_blank">
+          <div class="card-icon">💓</div>
+          <div class="card-info">
+            <div class="card-name">Uptime Kuma</div>
+            <div class="card-desc">服务监控</div>
+          </div>
+        </a>
+        <a class="card" href="https://adguard.qiulin.tech" target="_blank">
+          <div class="card-icon">🛡️</div>
+          <div class="card-info">
+            <div class="card-name">AdGuard Home</div>
+            <div class="card-desc">DNS广告拦截</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    
+    <div class="services" style="margin-top: 30px;">
+      <div class="section-title">💾 NAS 服务</div>
+      <div class="cards">
+        <a class="card" href="https://nas.qiulin.tech" target="_blank">
+          <div class="card-icon">🖥️</div>
+          <div class="card-info">
+            <div class="card-name">NAS 管理</div>
+            <div class="card-desc">QNAP Web UI</div>
+          </div>
+        </a>
+        <a class="card" href="https://vw.qiulin.tech" target="_blank">
+          <div class="card-icon">🔐</div>
+          <div class="card-info">
+            <div class="card-name">Vaultwarden</div>
+            <div class="card-desc">密码管理</div>
+          </div>
+        </a>
+        <a class="card" href="https://mp.qiulin.tech" target="_blank">
+          <div class="card-icon">🎬</div>
+          <div class="card-info">
+            <div class="card-name">MoviePilot</div>
+            <div class="card-desc">影视管理</div>
+          </div>
+        </a>
+        <a class="card" href="https://jf.qiulin.tech" target="_blank">
+          <div class="card-icon">▶️</div>
+          <div class="card-info">
+            <div class="card-name">Jellyfin</div>
+            <div class="card-desc">媒体服务器</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    
+    <div class="services" style="margin-top: 30px;">
+      <div class="section-title">🌐 个人网站</div>
+      <div class="cards">
+        <a class="card" href="https://n.qiulin.tech" target="_blank">
+          <div class="card-icon">🪪</div>
+          <div class="card-info">
+            <div class="card-name">License Query</div>
+            <div class="card-desc">机长执照查询</div>
+          </div>
+        </a>
+        <a class="card" href="https://blog.qiulin.tech" target="_blank">
+          <div class="card-icon">✈️</div>
+          <div class="card-info">
+            <div class="card-name">飞行博客</div>
+            <div class="card-desc">飞行记录与分享</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    
+    <!-- 底部 -->
+    <div class="footer">
+      <a href="https://beian.miit.gov.cn/" target="_blank">渝ICP备2026010186号-1</a>
+      &nbsp;·&nbsp;
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=50019002505444" target="_blank">渝公网安备50019002505444号</a>
+      &nbsp;·&nbsp;
+      <span>© 2024-2026 楸林</span>
+    </div>
+  </div>
+  
+  <script>
+    // 生成星空
+    function createStars() {
+      const stars = document.getElementById('stars');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 3 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+        star.style.animationDelay = Math.random() * 5 + 's';
+        stars.appendChild(star);
+      }
+    }
+    
+    // 更新时间进度
+    function updateTimeProgress() {
+      const now = new Date();
+      
+      // 今日
+      const dayPassed = now.getHours() * 60 + now.getMinutes();
+      const dayPercent = (dayPassed / 1440 * 100).toFixed(1);
+      document.getElementById('dayBar').style.width = dayPercent + '%';
+      document.getElementById('dayValue').textContent = dayPercent + '%';
+      
+      // 本周 (周日为0)
+      const weekDay = now.getDay();
+      const weekPercent = ((weekDay / 7) * 100).toFixed(1);
+      document.getElementById('weekBar').style.width = weekPercent + '%';
+      document.getElementById('weekValue').textContent = weekPercent + '%';
+      
+      // 本月
+      const monthDay = now.getDate();
+      const monthTotal = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const monthPercent = (monthDay / monthTotal * 100).toFixed(1);
+      document.getElementById('monthBar').style.width = monthPercent + '%';
+      document.getElementById('monthValue').textContent = monthPercent + '%';
+      
+      // 今年
+      const yearStart = new Date(now.getFullYear(), 0, 1);
+      const yearEnd = new Date(now.getFullYear() + 1, 0, 1);
+      const yearPercent = ((now - yearStart) / (yearEnd - yearStart) * 100).toFixed(1);
+      document.getElementById('yearBar').style.width = yearPercent + '%';
+      document.getElementById('yearValue').textContent = yearPercent + '%';
+    }
+    
+    // 每日一言
+    const quotes = [
+      "飞行不只是一种技能，更是一种对自由的向往。",
+      "保持好奇心，保持学习的热情。",
+      "技术是工具，解决问题才是目的。",
+      "简单是复杂的终极形式。",
+      "每一次起飞都是一次新的开始。",
+      "生活就像飞行，要有计划，也要有应变。",
+      "代码如诗，简洁而有力。",
+      "不积跬步，无以至千里。",
+      "仰望星空，脚踏实地。",
+      "人生没有白走的路，每一步都算数。",
+      "做好准备，然后相信自己。",
+      "最好的投资就是投资自己。",
+      "云层之上，永远是晴天。",
+      "飞行教会我：计划很重要，但应变更重要。"
+    ];
+    
+    document.getElementById('quoteText').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    
+    // 初始化
+    createStars();
+    updateTimeProgress();
+    setInterval(updateTimeProgress, 60000);
+  </script>
+</body>
+</html>

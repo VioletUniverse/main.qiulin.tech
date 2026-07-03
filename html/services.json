@@ -1,0 +1,44 @@
+[
+  {
+    "name": "MAG",
+    "icon": "fas fa-microchip",
+    "items": [
+      {"name": "仪表盘", "icon": "fas fa-home", "subtitle": "服务面板", "url": "https://homer.qiulin.tech"},
+      {"name": "ddns-go", "icon": "fas fa-globe", "subtitle": "动态DNS", "url": "http://192.168.31.3:9876"}
+    ]
+  },
+  {
+    "name": "网络服务",
+    "icon": "fas fa-network-wired",
+    "items": [
+      {"name": "NAS 管理", "icon": "fas fa-database", "subtitle": "QNAP Web UI", "url": "http://192.168.31.10:5000"},
+      {"name": "AdGuard Home", "icon": "fas fa-shield-alt", "subtitle": "DNS 广告拦截", "url": "http://192.168.31.3:3000"},
+      {"name": "Vaultwarden", "icon": "fas fa-lock", "subtitle": "密码管理", "url": "https://vw.qiulin.tech"},
+      {"name": "Home Assistant", "icon": "fas fa-home", "subtitle": "智能家居", "url": "http://192.168.31.10:8123"},
+      {"name": "Uptime Kuma", "icon": "fas fa-heartbeat", "subtitle": "服务监控", "url": "http://192.168.31.3:3001"}
+    ]
+  },
+  {
+    "name": "影视",
+    "icon": "fas fa-film",
+    "items": [
+      {"name": "MoviePilot", "icon": "fas fa-film", "subtitle": "影视管理", "url": "http://192.168.31.10:3000"},
+      {"name": "Metacubexd", "icon": "fas fa-shield-alt", "subtitle": "mihomo 代理面板", "url": "http://192.168.31.10:9097"}
+    ]
+  },
+  {
+    "name": "个人网站",
+    "icon": "fas fa-globe",
+    "items": [
+      {"name": "License Query", "icon": "fas fa-id-card", "subtitle": "n.qiulin.tech", "url": "https://n.qiulin.tech"},
+      {"name": "飞行博客", "icon": "fas fa-plane", "subtitle": "blog.qiulin.tech", "url": "https://blog.qiulin.tech"}
+    ]
+  },
+  {
+    "name": "常用链接",
+    "icon": "fas fa-link",
+    "items": [
+      {"name": "Cloudflare", "icon": "fas fa-cloud", "subtitle": "DNS 管理", "url": "https://dash.cloudflare.com"}
+    ]
+  }
+]
